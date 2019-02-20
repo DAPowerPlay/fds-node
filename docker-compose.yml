@@ -10,7 +10,7 @@ services:
       - 30301:30301/udp
     networks:
       chainnet:
-        ipv4_address: 172.25.0.101 # The miners need to know the IP address later on
+        ipv4_address: 173.25.0.101 # The miners need to know the IP address later on
 
   geth-dev-miner-1:
     hostname: geth-dev-miner-1
@@ -19,7 +19,7 @@ services:
     environment:
       - address=${ADDRESS_1} #derived from the private key which is passed in the args
       - bootnodeId=${BOOTNODE_PUBLIC_KEY} #derived from the nodekeyhex of the bootnode
-      - bootnodeIp=172.25.0.101
+      - bootnodeIp=173.25.0.101
     build:
       context: ./miner
       args:
@@ -30,7 +30,7 @@ services:
       - eth-data-1:/root/.ethash
     networks:
       chainnet:
-        ipv4_address: 172.25.0.102 # The monitor needs to know this address
+        ipv4_address: 173.25.0.102 # The monitor needs to know this address
 
   geth-dev-miner-2:
     hostname: geth-dev-miner-2
@@ -39,7 +39,7 @@ services:
     environment:
       - address=${ADDRESS_2} #derived from the private key which is passed in the args
       - bootnodeId=${BOOTNODE_PUBLIC_KEY} #derived from the nodekeyhex of the bootnode
-      - bootnodeIp=172.25.0.101
+      - bootnodeIp=173.25.0.101
     build:
       context: ./miner
       args:
@@ -50,7 +50,7 @@ services:
      - eth-data-2:/root/.ethash
     networks:
       chainnet:
-        ipv4_address: 172.25.0.104
+        ipv4_address: 173.25.0.104
 
   geth-dev-node:
      hostname: geth-dev-node
@@ -59,7 +59,7 @@ services:
      environment:
        - address=${ADDRESS_2} #derived from the private key which is passed in the args
        - bootnodeId=${BOOTNODE_PUBLIC_KEY} #derived from the nodekeyhex of the bootnode
-       - bootnodeIp=172.25.0.101
+       - bootnodeIp=173.25.0.101
      build:
        context: ./node
        args:
@@ -77,7 +77,7 @@ services:
       - eth-data-3:/root/.ethash
      networks:
        chainnet:
-         ipv4_address: 172.25.0.110
+         ipv4_address: 173.25.0.110
 
   geth-dev-swarm-1:
      hostname: geth-dev-swarm-1
@@ -86,7 +86,7 @@ services:
      environment:
        - address=${ADDRESS_2} #derived from the private key which is passed in the args
        - bootnodeId=${BOOTNODE_PUBLIC_KEY} #derived from the nodekeyhex of the bootnode
-       - bootnodeIp=172.25.0.101
+       - bootnodeIp=173.25.0.101
      build:
        context: ./swarm
        args:
@@ -100,7 +100,7 @@ services:
       - eth-data-4:/root/.ethash
      networks:
        chainnet:
-         ipv4_address: 172.25.0.111
+         ipv4_address: 173.25.0.111
 
   geth-dev-swarm-2:
      hostname: geth-dev-miner-3
@@ -109,7 +109,7 @@ services:
      environment:
        - address=${ADDRESS_1} #derived from the private key which is passed in the args
        - bootnodeId=${BOOTNODE_PUBLIC_KEY} #derived from the nodekeyhex of the bootnode
-       - bootnodeIp=172.25.0.101
+       - bootnodeIp=173.25.0.101
      build:
        context: ./swarm
        args:
@@ -123,7 +123,7 @@ services:
       - eth-data-5:/root/.ethash
      networks:
        chainnet:
-         ipv4_address: 172.25.0.112
+         ipv4_address: 173.25.0.112
 
   # geth-explorer:
   #   hostname: geth-explorer
@@ -136,14 +136,14 @@ services:
   #   container_name: geth-explorer
   #   networks:
   #     chainnet:
-  #       ipv4_address: 172.25.0.125
+  #       ipv4_address: 173.25.0.125
 
 networks:
   chainnet:
     driver: bridge
     ipam:
       config:
-      - subnet: 172.25.0.0/24
+      - subnet: 173.25.0.0/24
 
 volumes:
   eth-data-1:
