@@ -17,7 +17,11 @@ ARG privatekey
 RUN echo $password > ~/.accountpassword
 RUN echo $privatekey > ~/.privatekey
 ADD ./genesis.json ./genesis.json
-RUN geth init genesis.json
+#
+# If the next line is enabled, the chain will be initialized every time it is deployed.
+#
+# RUN geth init genesis.json
+#
 RUN geth account import --password ~/.accountpassword  ~/.privatekey
 
 ENV address=""

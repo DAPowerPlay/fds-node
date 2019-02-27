@@ -140,19 +140,19 @@ services:
 
   nginx:
     image: nginx:1.15-alpine
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
     ports:
       - "80:80"
       - "443:443"
     volumes:
       - ./nginx/conf:/etc/nginx/conf.d
-      - ./nginx/certbot/conf:/etc/letsencrypt
-      - ./nginx/certbot/www:/var/www/certbot
+      - ./nginx/certbot:/etc/letsencrypt
 
   certbot:
     image: certbot/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
     volumes:
-      - ./nginx/certbot/conf:/etc/letsencrypt
-      - ./nginx/certbot/www:/var/www/certbot
+      - ./nginx/certbot:/etc/letsencrypt
 
 networks:
   chainnet:
