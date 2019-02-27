@@ -27,7 +27,7 @@ services:
         password: pass
     container_name: geth-miner-1
     volumes:
-      - eth-data-1:/root/.ethash
+      - eth-data-1:/root/.ethereum
     networks:
       chainnet:
         ipv4_address: 173.25.0.102 # The monitor needs to know this address
@@ -74,7 +74,7 @@ services:
        timeout: 5s
        retries: 30
      volumes:
-      - eth-data-3:/root/.ethash
+      - eth-data-3:/root/.ethereum
      networks:
        chainnet:
          ipv4_address: 173.25.0.110
@@ -97,7 +97,7 @@ services:
        - 8500:8500
        - 30399:30399/udp
      volumes:
-      - eth-data-4:/root/.ethash
+      - eth-data-4:/root/.ethereum
      networks:
        chainnet:
          ipv4_address: 173.25.0.111
@@ -120,7 +120,7 @@ services:
        - 8501:8500
        - 30340:30399/udp
      volumes:
-      - eth-data-5:/root/.ethash
+      - eth-data-5:/root/.ethereum
      networks:
        chainnet:
          ipv4_address: 173.25.0.112
