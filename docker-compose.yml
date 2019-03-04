@@ -153,8 +153,8 @@ services:
 
   certbot:
     hostname: certbot
-    image: certbot/certbot
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    build:
+      context: ./certbot
     volumes:
       - certs-data:/etc/letsencrypt
     networks:
