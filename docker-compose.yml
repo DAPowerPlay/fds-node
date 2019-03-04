@@ -138,6 +138,31 @@ services:
   #     chainnet:
   #       ipv4_address: 173.25.0.125
 
+
+  nginx:
+    hostname: nginx
+    build:
+      context: ./nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - certs-data:/etc/letsencrypt
+    networks:
+       chainnet:
+          ipv4_address: 173.25.0.120
+
+  certbot:
+    hostname: certbot
+    image: certbot/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; echo \"Starting cert renew process\" ; while :; do echo \"Renewing certificate\" ; certbot renew; sleep 12h ; done;'"
+    volumes:
+      - certs-data:/etc/letsencrypt
+    networks:
+       chainnet:
+          ipv4_address: 173.25.0.121
+
+
 networks:
   chainnet:
     driver: bridge
@@ -151,4 +176,4 @@ volumes:
   eth-data-3:
   eth-data-4:
   eth-data-5:
-  # eth-data-6:
+  certs-data:
