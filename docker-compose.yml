@@ -47,7 +47,7 @@ services:
         password: word
     container_name: geth-miner-2
     volumes:
-     - eth-data-2:/root/.ethash
+     - eth-data-2:/root/.ethereum
     networks:
       chainnet:
         ipv4_address: 173.25.0.104
