@@ -17,14 +17,17 @@ ARG privatekey
 RUN echo $password > ~/.accountpassword
 RUN echo $privatekey > ~/.privatekey
 ADD ./noordung.json ./noordung.json
+
 RUN geth init noordung.json
 RUN geth account import --password ~/.accountpassword  ~/.privatekey
+ADD ./static-nodes.json ./static-nodes.json
+ADD ./init.sh /root/init.sh
 
 ENV address=""
 ENV bootnodeId=""
 ENV bootnodeIp=""
 
-CMD exec geth --networkid "235813" --verbosity=4 --rpc --rpcaddr "0.0.0.0" --rpcapi "eth,web3,net,admin,debug,db" --rpccorsdomain "*" --syncmode="fast" --nodiscover
+CMD /root/init.sh
 
 EXPOSE 8545
 EXPOSE 30303
