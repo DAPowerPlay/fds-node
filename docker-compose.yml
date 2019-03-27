@@ -7,67 +7,29 @@ services:
     build:
       context: ./bootnode
     ports:
-      - 30301:30301/udp
+      - 127.0.0.1:30301:30301/udp
     networks:
       chainnet:
         ipv4_address: 172.25.0.101 # The miners need to know the IP address later on
 
-  geth-dev-miner-1:
-    hostname: geth-dev-miner-1
-    depends_on:
-      - geth-bootnode
-    environment:
-      - address=${ADDRESS_1} #derived from the private key which is passed in the args
-      - bootnodeId=${BOOTNODE_PUBLIC_KEY} #derived from the nodekeyhex of the bootnode
-      - bootnodeIp=172.25.0.101
-    build:
-      context: ./miner
-      args:
-        privatekey: ${PRIVATE_KEY_1}
-        password: pass
-    container_name: geth-miner-1
-    volumes:
-      - eth-data-1:/root/.ethereum
-    networks:
-      chainnet:
-        ipv4_address: 172.25.0.102 # The monitor needs to know this address
-
-  geth-dev-miner-2:
-    hostname: geth-dev-miner-2
-    depends_on:
-      - geth-bootnode
-    environment:
-      - address=${ADDRESS_2} #derived from the private key which is passed in the args
-      - bootnodeId=${BOOTNODE_PUBLIC_KEY} #derived from the nodekeyhex of the bootnode
-      - bootnodeIp=172.25.0.101
-    build:
-      context: ./miner
-      args:
-        privatekey: ${PRIVATE_KEY_2}
-        password: word
-    container_name: geth-miner-2
-    volumes:
-     - eth-data-2:/root/.ethereum
-    networks:
-      chainnet:
-        ipv4_address: 172.25.0.104
-
   geth-dev-node:
      hostname: geth-dev-node
-     depends_on:
-       - geth-dev-miner-2
+     # depends_on:
+     #   - geth-dev-miner-2
      environment:
        - address=${ADDRESS_2} #derived from the private key which is passed in the args
-       - bootnodeId=${BOOTNODE_PUBLIC_KEY} #derived from the nodekeyhex of the bootnode
-       - bootnodeIp=172.25.0.101
+       # - bootnodeId=${BOOTNODE_PUBLIC_KEY} #derived from the nodekeyhex of the bootnode
+       # - bootnodeIp=172.25.0.101
      build:
        context: ./node
        args:
          privatekey: ${PRIVATE_KEY_2}
-         password: word
+         password: ${PASSWORD_2}
      container_name: geth-node
      ports:
-       - 8545:8545
+       - 127.0.0.1:8545:8545
+       - 30303:30303
+       - 30303:30303/udp       
      healthcheck:
        test: wget http://localhost:8545
        interval: 2s
@@ -94,8 +56,8 @@ services:
          password: pass
      container_name: geth-swarm-1
      ports:
-       - 8500:8500
-       - 30399:30399/udp
+       - 127.0.0.1:8500:8500
+       - 127.0.0.1:30399:30399/udp
      volumes:
       - eth-data-4:/root/.ethereum
      networks:
@@ -117,8 +79,8 @@ services:
          password: pass
      container_name: geth-swarm-2
      ports:
-       - 8501:8500
-       - 30340:30399/udp
+       - 127.0.0.1:8501:8500
+       - 127.0.0.1:30340:30399/udp
      volumes:
       - eth-data-5:/root/.ethereum
      networks:

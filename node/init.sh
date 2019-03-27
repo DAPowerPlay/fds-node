@@ -1,0 +1,2 @@
+cp ~/static-nodes.json /root/.ethereum/geth/static-nodes.json
+geth --networkid "235813" --verbosity=4 --rpc --rpcaddr "0.0.0.0" --rpcapi "eth,web3,net,admin,debug,db" --rpccorsdomain "*" --syncmode="fast" --nodiscover
