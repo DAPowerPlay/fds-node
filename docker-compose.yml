@@ -12,70 +12,24 @@ services:
       chainnet:
         ipv4_address: 172.25.0.101 # The miners need to know the IP address later on
 
-  geth-dev-miner-1:
-    hostname: geth-dev-miner-1
-    depends_on:
-      - geth-bootnode
-    environment:
-      - address=${ADDRESS_1} #derived from the private key which is passed in the args
-      - bootnodeId=${BOOTNODE_PUBLIC_KEY} #derived from the nodekeyhex of the bootnode
-      - bootnodeIp=172.25.0.101
-    build:
-      context: ./miner
-      args:
-        privatekey: ${PRIVATE_KEY_1}
-        password: pass
-    ports:
-      - 127.0.0.1:30305:30303
-      - 127.0.0.1:30305:30303/udp
-    container_name: geth-miner-1
-    volumes:
-      - eth-data-1:/root/.ethereum
-    networks:
-      chainnet:
-        ipv4_address: 172.25.0.102 # The monitor needs to know this address
-
-  geth-dev-miner-2:
-    hostname: geth-dev-miner-2
-    depends_on:
-      - geth-bootnode
-    environment:
-      - address=${ADDRESS_2} #derived from the private key which is passed in the args
-      - bootnodeId=${BOOTNODE_PUBLIC_KEY} #derived from the nodekeyhex of the bootnode
-      - bootnodeIp=172.25.0.101
-    build:
-      context: ./miner
-      args:
-        privatekey: ${PRIVATE_KEY_2}
-        password: word
-    container_name: geth-miner-2
-    ports:
-      - 127.0.0.1:30304:30303
-      - 127.0.0.1:30304:30303/udp
-    volumes:
-     - eth-data-2:/root/.ethereum
-    networks:
-      chainnet:
-        ipv4_address: 172.25.0.104
-
   geth-dev-node:
      hostname: geth-dev-node
-     depends_on:
-       - geth-dev-miner-2
+     # depends_on:
+     #   - geth-dev-miner-2
      environment:
        - address=${ADDRESS_2} #derived from the private key which is passed in the args
-       - bootnodeId=${BOOTNODE_PUBLIC_KEY} #derived from the nodekeyhex of the bootnode
-       - bootnodeIp=172.25.0.101
+       # - bootnodeId=${BOOTNODE_PUBLIC_KEY} #derived from the nodekeyhex of the bootnode
+       # - bootnodeIp=172.25.0.101
      build:
        context: ./node
        args:
          privatekey: ${PRIVATE_KEY_2}
-         password: word
+         password: ${PASSWORD_2}
      container_name: geth-node
      ports:
-       - 8545:8545
-       - 127.0.0.1:30303:30303
-       - 127.0.0.1:30303:30303/udp       
+       - 127.0.0.1:8545:8545
+       - 30303:30303
+       - 30303:30303/udp       
      healthcheck:
        test: wget http://localhost:8545
        interval: 2s
@@ -146,7 +100,6 @@ services:
   #     chainnet:
   #       ipv4_address: 172.25.0.125
 
-
   nginx:
     hostname: nginx
     build:
@@ -170,13 +123,12 @@ services:
        chainnet:
           ipv4_address: 172.25.0.121
 
-
 networks:
   chainnet:
     driver: bridge
     ipam:
       config:
-      - subnet: 172.25.0.0/24
+        - subnet: 172.25.0.0/24
 
 volumes:
   eth-data-1:

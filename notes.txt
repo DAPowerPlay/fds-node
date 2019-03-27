@@ -1,6 +1,0 @@
-change network ID too!
-
-geth data usage
-
-1024*1*60*60*24*7*8/1000000000 where 8 number o weeks
-
