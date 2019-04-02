@@ -6,6 +6,7 @@ services:
       - "nodekeyhex=${BOOTNODE_PRIVATE_KEY}" #Needs to be fix, so that the miners know the resulting enode id
     build:
       context: ./bootnode
+    restart: always     
     ports:
       - 127.0.0.1:30301:30301/udp
     networks:
@@ -13,97 +14,88 @@ services:
         ipv4_address: 172.25.0.101 # The miners need to know the IP address later on
 
   geth-dev-node:
-     hostname: geth-dev-node
-     # depends_on:
-     #   - geth-dev-miner-2
-     environment:
-       - address=${ADDRESS_2} #derived from the private key which is passed in the args
-       # - bootnodeId=${BOOTNODE_PUBLIC_KEY} #derived from the nodekeyhex of the bootnode
-       # - bootnodeIp=172.25.0.101
-     build:
-       context: ./node
-       args:
-         privatekey: ${PRIVATE_KEY_2}
-         password: ${PASSWORD_2}
-     container_name: geth-node
-     ports:
-       - 127.0.0.1:8545:8545
-       - 30303:30303
-       - 30303:30303/udp       
-     healthcheck:
-       test: wget http://localhost:8545
-       interval: 2s
-       timeout: 5s
-       retries: 30
-     volumes:
-      - eth-data-3:/root/.ethereum
-     networks:
-       chainnet:
-         ipv4_address: 172.25.0.110
+    hostname: geth-dev-node
+    # depends_on:
+    #   - geth-dev-miner-2
+    environment:
+      - address=${ADDRESS_2} #derived from the private key which is passed in the args
+      # - bootnodeId=${BOOTNODE_PUBLIC_KEY} #derived from the nodekeyhex of the bootnode
+      # - bootnodeIp=172.25.0.101
+    build:
+      context: ./node
+      args:
+        privatekey: ${PRIVATE_KEY_2}
+        password: ${PASSWORD_2}
+    restart: always     
+    container_name: geth-node
+    ports:
+      - 127.0.0.1:8545:8545
+      - 30303:30303
+      - 30303:30303/udp       
+    healthcheck:
+      test: wget http://localhost:8545
+      interval: 2s
+      timeout: 5s
+      retries: 30
+    volumes:
+     - eth-data-3:/root/.ethereum
+    networks:
+      chainnet:
+        ipv4_address: 172.25.0.110
 
   geth-dev-swarm-1:
-     hostname: geth-dev-swarm-1
-     depends_on:
-       - geth-dev-node
-     environment:
-       - address=${ADDRESS_2} #derived from the private key which is passed in the args
-       - bootnodeId=${BOOTNODE_PUBLIC_KEY} #derived from the nodekeyhex of the bootnode
-       - bootnodeIp=172.25.0.101
-     build:
-       context: ./swarm
-       args:
-         privatekey: ${PRIVATE_KEY_2}
-         password: pass
-     container_name: geth-swarm-1
-     ports:
-       - 127.0.0.1:8500:8500
-       - 127.0.0.1:30399:30399/udp
-     volumes:
-      - eth-data-4:/root/.ethereum
-     networks:
-       chainnet:
-         ipv4_address: 172.25.0.111
+    hostname: geth-dev-swarm-1
+    depends_on:
+      - geth-dev-node
+    environment:
+      - address=${ADDRESS_2} #derived from the private key which is passed in the args
+      - bootnodeId=${BOOTNODE_PUBLIC_KEY} #derived from the nodekeyhex of the bootnode
+      - bootnodeIp=172.25.0.101
+    build:
+      context: ./swarm
+      args:
+        privatekey: ${PRIVATE_KEY_2}
+        password: ${PASSWORD_2}
+    restart: always         
+    container_name: geth-swarm-1
+    ports:
+      - 127.0.0.1:8500:8500
+      - 127.0.0.1:30399:30399/udp
+    volumes:
+     - eth-data-4:/root/.ethereum
+    networks:
+      chainnet:
+        ipv4_address: 172.25.0.111
 
   geth-dev-swarm-2:
-     hostname: geth-dev-miner-3
-     depends_on:
-       - geth-dev-node
-     environment:
-       - address=${ADDRESS_1} #derived from the private key which is passed in the args
-       - bootnodeId=${BOOTNODE_PUBLIC_KEY} #derived from the nodekeyhex of the bootnode
-       - bootnodeIp=172.25.0.101
-     build:
-       context: ./swarm
-       args:
-         privatekey: ${PRIVATE_KEY_1}
-         password: pass
-     container_name: geth-swarm-2
-     ports:
-       - 127.0.0.1:8501:8500
-       - 127.0.0.1:30340:30399/udp
-     volumes:
-      - eth-data-5:/root/.ethereum
-     networks:
-       chainnet:
-         ipv4_address: 172.25.0.112
-
-  # geth-explorer:
-  #   hostname: geth-explorer
-  #   depends_on:
-  #     - geth-dev-node
-  #   ports:
-  #     - 8080:8080
-  #   build:
-  #     context: ./explorer
-  #   container_name: geth-explorer
-  #   networks:
-  #     chainnet:
-  #       ipv4_address: 172.25.0.125
+    hostname: geth-dev-swarm-2
+    depends_on:
+      - geth-dev-node
+    environment:
+      - address=${ADDRESS_1} #derived from the private key which is passed in the args
+      - bootnodeId=${BOOTNODE_PUBLIC_KEY} #derived from the nodekeyhex of the bootnode
+      - bootnodeIp=172.25.0.101
+    build:
+      context: ./swarm
+      args:
+        privatekey: ${PRIVATE_KEY_1}
+        password: ${PASSWORD_2}
+    restart: always             
+    container_name: geth-swarm-2
+    ports:
+      - 127.0.0.1:8501:8500
+      - 127.0.0.1:30340:30399/udp
+    volumes:
+     - eth-data-5:/root/.ethereum
+    networks:
+      chainnet:
+        ipv4_address: 172.25.0.112
 
   nginx:
     hostname: nginx
     build:
       context: ./nginx
+    restart: always           
     ports:
       - "80:80"
       - "443:443"
