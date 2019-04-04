@@ -1,33 +1,16 @@
 version: "3"
 services:
-  geth-bootnode:
-    hostname: geth-bootnode
+  geth:
+    hostname: geth
     environment:
-      - "nodekeyhex=${BOOTNODE_PRIVATE_KEY}" #Needs to be fix, so that the miners know the resulting enode id
+      - address=${ADDRESS} #derived from the private key which is passed in the args
     build:
-      context: ./bootnode
-    restart: always     
-    ports:
-      - 127.0.0.1:30301:30301/udp
-    networks:
-      chainnet:
-        ipv4_address: 172.25.0.101 # The miners need to know the IP address later on
-
-  geth-dev-node:
-    hostname: geth-dev-node
-    # depends_on:
-    #   - geth-dev-miner-2
-    environment:
-      - address=${ADDRESS_2} #derived from the private key which is passed in the args
-      # - bootnodeId=${BOOTNODE_PUBLIC_KEY} #derived from the nodekeyhex of the bootnode
-      # - bootnodeIp=172.25.0.101
-    build:
-      context: ./node
+      context: ./geth
       args:
-        privatekey: ${PRIVATE_KEY_2}
-        password: ${PASSWORD_2}
+        privatekey: ${PRIVATE_KEY}
+        password: ${PASSWORD}
     restart: always     
-    container_name: geth-node
+    container_name: geth
     ports:
       - 127.0.0.1:8545:8545
       - 30303:30303
@@ -38,69 +21,43 @@ services:
       timeout: 5s
       retries: 30
     volumes:
-     - eth-data-3:/root/.ethereum
+     - eth-data:/root/.ethereum
     networks:
       chainnet:
         ipv4_address: 172.25.0.110
 
-  geth-dev-swarm-1:
-    hostname: geth-dev-swarm-1
-    depends_on:
-      - geth-dev-node
+  swarm:
+    hostname: swarm
     environment:
-      - address=${ADDRESS_2} #derived from the private key which is passed in the args
-      - bootnodeId=${BOOTNODE_PUBLIC_KEY} #derived from the nodekeyhex of the bootnode
-      - bootnodeIp=172.25.0.101
+      - address=${ADDRESS} #derived from the private key which is passed in the args
     build:
       context: ./swarm
       args:
-        privatekey: ${PRIVATE_KEY_2}
-        password: ${PASSWORD_2}
+        privatekey: ${PRIVATE_KEY}
+        password: ${PASSWORD}
     restart: always         
-    container_name: geth-swarm-1
+    container_name: swarm
     ports:
       - 127.0.0.1:8500:8500
-      - 127.0.0.1:30399:30399/udp
+      # - 127.0.0.1:30399:30399/udp
     volumes:
-     - eth-data-4:/root/.ethereum
+     - swarm-data:/root/.ethereum
     networks:
       chainnet:
         ipv4_address: 172.25.0.111
-
-  geth-dev-swarm-2:
-    hostname: geth-dev-swarm-2
-    depends_on:
-      - geth-dev-node
-    environment:
-      - address=${ADDRESS_1} #derived from the private key which is passed in the args
-      - bootnodeId=${BOOTNODE_PUBLIC_KEY} #derived from the nodekeyhex of the bootnode
-      - bootnodeIp=172.25.0.101
-    build:
-      context: ./swarm
-      args:
-        privatekey: ${PRIVATE_KEY_1}
-        password: ${PASSWORD_2}
-    restart: always             
-    container_name: geth-swarm-2
-    ports:
-      - 127.0.0.1:8501:8500
-      - 127.0.0.1:30340:30399/udp
-    volumes:
-     - eth-data-5:/root/.ethereum
-    networks:
-      chainnet:
-        ipv4_address: 172.25.0.112
 
   nginx:
     hostname: nginx
     build:
       context: ./nginx
-    restart: always           
+    restart: always       
+    container_name: nginx    
     ports:
       - "80:80"
       - "443:443"
     volumes:
       - certs-data:/etc/letsencrypt
+      - certs-www:/var/www/certbot
     networks:
        chainnet:
           ipv4_address: 172.25.0.120
@@ -109,8 +66,10 @@ services:
     hostname: certbot
     image: certbot/certbot
     entrypoint: "/bin/sh -c 'trap exit TERM; echo \"Starting cert renew process\" ; while :; do echo \"Renewing certificate\" ; certbot renew; sleep 12h ; done;'"
+    container_name: certbot
     volumes:
       - certs-data:/etc/letsencrypt
+      - certs-www:/var/www/certbot
     networks:
        chainnet:
           ipv4_address: 172.25.0.121
@@ -123,9 +82,7 @@ networks:
         - subnet: 172.25.0.0/24
 
 volumes:
-  eth-data-1:
-  eth-data-2:
-  eth-data-3:
-  eth-data-4:
-  eth-data-5:
+  eth-data:
+  swarm-data:
   certs-data:
+  certs-www:
