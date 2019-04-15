@@ -21,7 +21,7 @@ services:
       timeout: 5s
       retries: 30
     volumes:
-     - eth-data:/root/.ethereum
+     - geth-data:/root/.ethereum
     networks:
       chainnet:
         ipv4_address: 172.25.0.110
@@ -82,7 +82,7 @@ networks:
         - subnet: 172.25.0.0/24
 
 volumes:
-  eth-data:
+  geth-data:
   swarm-data:
   certs-data:
   certs-www:
